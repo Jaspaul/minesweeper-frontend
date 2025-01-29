@@ -1,0 +1,18 @@
+version: "3.7"
+
+services:
+  minesweeper.jaspaulbola.com:
+    image: ghcr.io/jaspaul/minesweeper-frontend:latest
+    restart: always
+    labels:
+      - traefik.http.routers.minesweeper-jaspaulbola.rule=Host(`minesweeper.jaspaulbola.com`)
+      - traefik.http.routers.minesweeper-jaspaulbola.entrypoints=https
+      - traefik.http.routers.minesweeper-jaspaulbola.tls=true
+      - traefik.http.routers.minesweeper-jaspaulbola.tls.certresolver=letsencrypt
+    networks:
+      - default
+
+networks:
+  default:
+    external:
+      name: traefik
