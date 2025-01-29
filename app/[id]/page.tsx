@@ -95,8 +95,8 @@ export default function Page({ params }: { params: Promise<{ id: string }> }) {
 
   return (
     <>
-      <div className="flex items-center justify-center h-screen">
-        <div className="w-full max-w-sm">
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="min-w-full">
           <h1 className="text-center text-4xl mb-4">{gameStatus(game)}</h1>
 
           <div className="flex justify-center items-center">

@@ -48,12 +48,12 @@ export default function Page() {
           </div>
 
           <div className="mb-4">
-            <label>Rows (2 - 20)</label>
+            <label>Rows (2 - 80)</label>
             <input
               type="number"
               id="rows"
               min="2"
-              max="20"
+              max="80"
               className="rounded w-full py-2 px-3 text-black"
               placeholder="Enter rows"
               required
@@ -61,12 +61,12 @@ export default function Page() {
           </div>
 
           <div className="mb-4">
-            <label>Columns (2 - 20)</label>
+            <label>Columns (2 - 80)</label>
             <input
               type="number"
               id="columns"
               min="2"
-              max="20"
+              max="80"
               className="rounded w-full py-2 px-3 text-black"
               placeholder="Enter columns"
               required
