@@ -1,27 +1,27 @@
 "use client";
 
 import { gameStatus } from "@/utilities";
-import { useState, useEffect } from "react";
+import { useState, useEffect, Dispatch, SetStateAction } from "react";
 import Image from "next/image";
 
 export default function Page({ params }: { params: Promise<{ id: string }> }) {
-  const [game, setGame] = useState({
-    player_name: "",
-    status: "",
-    bomb_count: 0,
-    board: [],
-    rows: 0,
-    columns: 0,
-    moves: 0,
-  });
+  // eslint-disable-next-line  @typescript-eslint/no-explicit-any
+  const [game, setGame]: [any, Dispatch<SetStateAction<null>>] = useState(null);
+  const [error, setError] = useState(null);
 
   async function loadGame() {
     const { id } = await params;
     const res = await fetch(
       `${process.env.NEXT_PUBLIC_SERVER_URL}/minesweeper/${id}`,
     );
-    const game = await res.json();
-    setGame(game);
+    const data = await res.json();
+
+    if (res.status !== 200) {
+      setError(data.error);
+      return;
+    }
+
+    setGame(data);
   }
 
   async function toggleFlag(row: number, column: number) {
@@ -37,8 +37,14 @@ export default function Page({ params }: { params: Promise<{ id: string }> }) {
         body: JSON.stringify({ row, column }),
       },
     );
-    const game = await res.json();
-    setGame(game);
+    const data = await res.json();
+
+    if (res.status !== 200) {
+      setError(data.error);
+      return;
+    }
+
+    setGame(data);
   }
 
   async function clickCell(row: number, column: number) {
@@ -54,15 +60,38 @@ export default function Page({ params }: { params: Promise<{ id: string }> }) {
         body: JSON.stringify({ row, column }),
       },
     );
-    const game = await res.json();
-    setGame(game);
+    const data = await res.json();
+
+    if (res.status !== 200) {
+      setError(data.error);
+      return;
+    }
+
+    setGame(data);
   }
 
   useEffect(() => {
     loadGame();
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
-  if (!game) return <div>Loading...</div>;
+  if (!game && !error)
+    return (
+      <div className="flex items-center justify-center h-screen">
+        Loading...
+      </div>
+    );
+
+  if (error)
+    return (
+      <div className="flex items-center justify-center h-screen">{error}</div>
+    );
+
+  if (!game)
+    return (
+      <div className="flex items-center justify-center h-screen">
+        Failed loading the game, try again later!
+      </div>
+    );
 
   return (
     <>
@@ -73,7 +102,7 @@ export default function Page({ params }: { params: Promise<{ id: string }> }) {
           <div className="flex justify-center items-center">
             <table className="border border-white">
               <tbody>
-                {game.board.map((rows: [], x) => (
+                {game.board.map((rows: [], x: number) => (
                   <tr key={x}>
                     {rows.map((image: string, y) => (
                       <td
@@ -103,7 +132,11 @@ export default function Page({ params }: { params: Promise<{ id: string }> }) {
 
           <h1 className="text-center text-2xl mt-4">
             @{game.player_name} (
-            {game.board.flat().filter((i) => i === "square-flagged.png").length}{" "}
+            {
+              game.board
+                .flat()
+                .filter((i: string) => i === "square-flagged.png").length
+            }{" "}
             of {game.bomb_count} 💣&apos;s flagged)
           </h1>
         </div>

@@ -22,8 +22,14 @@ export default function Page() {
       },
     );
 
-    const { id } = await res.json();
-    window.location.href = `/${id}`;
+    const data = await res.json();
+
+    if (res.status !== 200) {
+      alert(data.error);
+      return;
+    }
+
+    window.location.href = `/${data.id}`;
   }
 
   return (
